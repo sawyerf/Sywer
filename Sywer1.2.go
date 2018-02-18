@@ -14,7 +14,6 @@ type Request struct{
 	connection string
 	err string
 }
-//"HTTP/1.1 200 OK\r\nContent-length: " + fmt.Sprint(len(data)) + "\r\nConnection: Close\r\n\r\n"
 
 func (c Request) Header(size string) []byte{
 	var header string = ""
