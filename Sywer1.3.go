@@ -5,6 +5,8 @@ import ("fmt"
 		"log"
 		"os")
 
+const src_path string = "/srv/http/" 
+
 type Request struct{
 	ip net.Addr
 	method string
@@ -53,15 +55,15 @@ func request_analyzer(get string, size int) Request{
 func file_recup(name string) ([]byte, string){
 	if name == ""{
 		name = "index.html"}
-	fi, err := os.Stat(name)
+	fi, err := os.Stat(src_path + name)
 	if os.IsNotExist(err){
 		return []byte("<h1>404 Not Found</h1>"), "404 Not Found"}
 	switch mode := fi.Mode(); {
 		case mode.IsDir():
 			return []byte("<h1>301 Moved Permanently</h1>"), "301 Moved Permanently"
 		case mode.IsRegular():
-			file, _ := os.Open(name)
-			buffer := make([]byte, 5*1024)
+			file, _ := os.Open(src_path + name)
+			buffer := make([]byte, fi.Size())
 			size, _ := file.Read(buffer)
 	return buffer[:size], "200 OK"
 		default:
@@ -70,7 +72,7 @@ func file_recup(name string) ([]byte, string){
 }
 
 func directory_recup(name string) ([]byte, string){
-	fi, err := os.Stat(name)
+	fi, err := os.Stat(src_path + name)
 	mode := fi.Mode()
 	if os.IsNotExist(err) || mode.IsRegular(){
 		return []byte("<h1>404 Not Found</h1>"), "404 Not Found"}
