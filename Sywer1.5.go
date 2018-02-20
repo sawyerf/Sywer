@@ -1,3 +1,4 @@
+//Version 1.5
 package main
 
 import ("fmt"
@@ -6,7 +7,7 @@ import ("fmt"
 		"os"
 		"io/ioutil")
 
-const src_path string = "" 
+const src_path string = "/srv/http/" //the directory where you have the files you want to share 
 
 type Request struct{
 	//info request
@@ -50,7 +51,7 @@ func (c Request) Data(conn net.Conn){
 		case "200":
 			if !c.type_path{
 				_, _ = conn.Write([]byte("<h1>Index Of " + c.path + "</h1>\n<ul>"))
-				files, _ := ioutil.ReadDir(c.path)
+				files, _ := ioutil.ReadDir(src_path + c.path)
 				for _, file := range files{
 					_, _ = conn.Write([]byte("<li><a href=\"" + file.Name() + "\">" + file.Name() + "</a></li>\n"))
 				}
@@ -58,7 +59,7 @@ func (c Request) Data(conn net.Conn){
 				return
 			}
 			buffer := make([]byte, 1024)
-			file, _ := os.Open(c.path)
+			file, _ := os.Open(src_path + c.path)
 			for{
 				size, _ := file.Read(buffer)
 				if size == 0{
@@ -90,6 +91,7 @@ func request_analyzer(get string, size int) Request{
 				req.path = get[nb+5:i-9]
 				req.type_path = true
 				if req.path == ""{
+					req.path = "index.html"
 				} else{ if req.path[len(req.path)-1] == 47{
 					req.type_path = false}}
 			} else {if get[nb:nb+5] == "Host:"{
