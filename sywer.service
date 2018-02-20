@@ -1,0 +1,9 @@
+[Unit]
+Description=Sywer
+
+[Service]
+type=forking
+ExecStart=/usr/sbin/sywer
+
+[Install]
+WantedBy=multi-user.target
