@@ -5,9 +5,9 @@ import ("fmt"
 		"net"
 		"log"
 		"./bin/file"
-		"./bin/request")
+		"./bin/request"
+		"./bin/settings")
 
-const src_path string = "/srv/http/" //the directory where you have the files you want to share 
 
 func Ip(ip net.Addr) string{
 	ip_str := fmt.Sprint(ip)
@@ -22,7 +22,7 @@ func Ip(ip net.Addr) string{
 	return ip_str
 }
 
-func recv(conn net.Conn){
+func recv(conn net.Conn, set settings.Settings){
 	buffer := make([]byte, 4096)
 	size, err := conn.Read(buffer)
 
@@ -39,21 +39,22 @@ func recv(conn net.Conn){
 		return}
 
 	req.Ip = Ip(conn.RemoteAddr())
-	req.Src_path = src_path
 	// File and Directory check
 	if req.Type_path{
-		req.Err, req.Size = file.File_check(req.Src_path + req.Path)
+		req.Err = file.File_check(set.Path + req.Path)
 	} else{
-		req.Err = file.Dir_check(req.Src_path + req.Path)}
+		req.Err = file.Dir_check(set.Path + req.Path)}
 
-	_, err = conn.Write(req.Header())
-	req.Data(conn)
+	_, err = conn.Write(req.Header(set))
+	req.Data(conn, set)
 	conn.Close()
 	fmt.Println(req.Ip, "\t", req.Method, "/" + req.Path + "\t", req.User_agent, "\t", req.Err)
+	buffer = buffer[:0]
 }
 
 func main(){
-	server, err := net.Listen("tcp", ":8080")
+	set := settings.Recup("settings.swy")
+	server, err := net.Listen("tcp", ":" + set.Port)
 	if err != nil {
 			log.Fatalln(err)
 	}
@@ -64,7 +65,7 @@ func main(){
 			fmt.Println("[*]Erreur", err)
 		}
 		//fmt.Println("[*]Nouvelle ecoute", conn)
-		go recv(conn)
+		go recv(conn, set)
 	}
 }
 
