@@ -29,10 +29,10 @@ func Recup(path string) Settings{
 	for i:=0; i!=size; i++{
 		if data[i] == 13{
 			if data[nb:nb+5] == "port	"{
-				set.Port = data[nb+5:i]}
-			if data[nb:nb+5] == "path	"{
-				set.Path = data[nb+5:i]}
-			if data[nb:nb+6] == "error_"{
+				set.Port = data[nb+5:i]
+			} else if data[nb:nb+5] == "path	"{
+				set.Path = data[nb+5:i]
+			} else if data[nb:nb+6] == "error_"{
 				switch data[nb+6:nb+10] {
 				case "404	":
 					set.Error404 = data[nb+10:i]
