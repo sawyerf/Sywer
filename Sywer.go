@@ -4,9 +4,9 @@ package main
 import ("fmt"
 		"net"
 		"log"
-		"./bin/file"
-		"./bin/request"
-		"./bin/settings")
+		"./src/file"
+		"./src/request"
+		"./src/settings")
 
 
 func Ip(ip net.Addr) string{
