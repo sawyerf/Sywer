@@ -127,12 +127,14 @@ func Request_analyzer(get string, Size int) Request{
 				req.Type_path = true
 				if req.Path == ""{
 					req.Path = "index.html"
-				} else{ if req.Path[len(req.Path)-1] == 47{
-					req.Type_path = false}}
-			} else {if get[nb:nb+5] == "Host:"{
+				} else if req.Path[len(req.Path)-1] == 47{
+					req.Type_path = false
+				}
+			} else if get[nb:nb+5] == "Host:"{
 				req.Host = get[nb+6:i]
-			} else {if get[nb:nb+11] == "User-Agent:"{
-				req.User_agent = get[nb+12:i]}}}
+			} else if get[nb:nb+11] == "User-Agent:"{
+				req.User_agent = get[nb+12:i]
+			}
 			nb = i + 2
 		}
 	}
