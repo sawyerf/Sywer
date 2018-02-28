@@ -45,7 +45,7 @@ func Recup(path string) Settings{
 			nb = i + 2
 		}
 	}
-	if set.Port != ""{
+	if set.Port == ""{
 		set.Port = "80"
 	}
 	fmt.Println(set)
