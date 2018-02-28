@@ -20,7 +20,10 @@ func File_check(path string) string{
 }
 
 func File_size(path string) int64{
-	fi, _ := os.Stat(path)
+	fi, err := os.Stat(path)
+	if err != nil{
+		return 0
+	}
 	return fi.Size()
 }
 
