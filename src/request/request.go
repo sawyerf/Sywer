@@ -81,7 +81,11 @@ func (c Request) Data(conn net.Conn, set settings.Settings){
 					return}
 			if set.Error404 != ""{
 				buffer := make([]byte, 1024)
-				file, _ := os.Open(set.Error404)
+				file, err := os.Open(set.Error404)
+				if err != nil{
+					conn.Write([]byte("<h1>404 Not Found</h1>"))
+					return
+				}
 				for{
 					Size, _ := file.Read(buffer)
 					if Size == 0{
@@ -97,7 +101,9 @@ func (c Request) Data(conn net.Conn, set settings.Settings){
 		case "301":
 			if set.Error301 != ""{
 				buffer := make([]byte, 1024)
-				file, _ := os.Open(set.Error301)
+				file, err := os.Open(set.Error301)
+				if err != nil {
+					conn.Write([]byte("<h1>301 Moved Permanently</h1>"))
 				for{
 					Size, _ := file.Read(buffer)
 					if Size == 0{
@@ -108,7 +114,7 @@ func (c Request) Data(conn net.Conn, set settings.Settings){
 						_, _ = conn.Write(buffer[:Size])}
 				}
 			}else {
-				conn.Write([]byte("<h1>404 Not Found</h1>"))
+				conn.Write([]byte("<h1>301 Moved Permanently</h1>"))
 			}
 		default:
 			return
