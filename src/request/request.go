@@ -104,6 +104,7 @@ func (c Request) Data(conn net.Conn, set settings.Settings){
 				file, err := os.Open(set.Error301)
 				if err != nil {
 					conn.Write([]byte("<h1>301 Moved Permanently</h1>"))
+				}
 				for{
 					Size, _ := file.Read(buffer)
 					if Size == 0{
