@@ -1,4 +1,4 @@
-//Version 0.6
+//Version 0.22
 package main
 
 import ("fmt"
