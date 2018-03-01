@@ -6,6 +6,7 @@ import ("fmt"
 type Settings struct{
 	Port string
 	Path string
+	Index string
 	Error404 string
 	Error301 string
 }
@@ -32,6 +33,8 @@ func Recup(path string) Settings{
 				set.Port = data[nb+5:i]
 			} else if data[nb:nb+5] == "path	"{
 				set.Path = data[nb+5:i]
+			} else if data[nb:nb+6] == "index	"{
+				set.Index = data[nb+6:i]
 			} else if data[nb:nb+6] == "error_"{
 				switch data[nb+6:nb+10] {
 				case "404	":

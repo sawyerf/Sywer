@@ -20,7 +20,7 @@ type Request struct{
 	Err string
 }
 
-func (c Request) Header(set settings.Settings) []byte{ 
+func (c Request) Header(set settings.Settings) []byte{
 	var header string = ""
 	if c.Method == "GET"{
 		var size int64
@@ -132,10 +132,10 @@ func Request_analyzer(get string, Size int) Request{
 				req.Method = "GET"
 				req.Path = get[nb+5:i-9]
 				req.Type_path = true
-				if req.Path == ""{
-					req.Path = "index.html"
-				} else if req.Path[len(req.Path)-1] == 47{
+				if req.Path != ""{
+					if req.Path[len(req.Path)-1] == 47{
 					req.Type_path = false
+					}
 				}
 			} else if get[nb:nb+5] == "Host:"{
 				req.Host = get[nb+6:i]

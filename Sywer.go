@@ -36,7 +36,10 @@ func recv(conn net.Conn, set settings.Settings){
 	fmt.Println(req)
 	if req.Method == ""{
 		conn.Close()
-		return}
+		return
+	} else if req.Path == ""{
+		req.Path = set.Index
+	}
 
 	req.Ip = Ip(conn.RemoteAddr())
 	// File and Directory check
@@ -68,4 +71,3 @@ func main(){
 		go recv(conn, set)
 	}
 }
-
