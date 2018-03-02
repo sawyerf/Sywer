@@ -12,6 +12,9 @@ type Settings struct{
 }
 
 func Line_analyzer(set Settings, data string, i int) Settings{
+	if len(data) == 0{
+		return set
+	}
 	if data[0:5] == "port	"{
 		set.Port = data[5:i]
 	} else if data[0:5] == "path	"{
