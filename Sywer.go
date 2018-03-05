@@ -23,16 +23,25 @@ func Ip(ip net.Addr) string{
 }
 
 func recv(conn net.Conn, set settings.Settings){
-	buffer := make([]byte, 4096)
-	size, err := conn.Read(buffer)
-
-	if err != nil {
-		fmt.Println(err)
-		conn.Close()
-		return
+	buffer := make([]byte, 1024)
+	var size_data int = 0
+	var req_data string
+	for{
+		size, err := conn.Read(buffer)
+		if err != nil {
+			fmt.Println(err)
+			conn.Close()
+			return
+		}
+		size_data = size_data + size
+		req_data = req_data + string(buffer[:size])
+		fmt.Println(len(req_data[size_data-5:size_data]))
+		if req_data[size_data-4:size_data] == "\r\n\r\n"{
+			break
+		}
 	}
 
-	req := request.Request_analyzer(string(buffer[:size+11]), size)
+	req := request.Request_analyzer(req_data, size_data)
 	fmt.Println(req)
 	if req.Method == ""{
 		conn.Close()
@@ -48,7 +57,10 @@ func recv(conn net.Conn, set settings.Settings){
 	} else{
 		req.Err = file.Dir_check(set.Path + req.Path)}
 
-	_, err = conn.Write(req.Header(set))
+	_, err := conn.Write(req.Header(set))
+	if err != nil{
+		return
+	}
 	req.Data(conn, set)
 	conn.Close()
 	fmt.Println(req.Ip, "\t", req.Method, "/" + req.Path + "\t", req.User_agent, "\t", req.Err)

@@ -41,7 +41,7 @@ func (c Request) Header(set settings.Settings) []byte{
 			}
 		}
 		if 0 < size{
-		header += "Accept-Ranges: bytes\r\nContent-Lenght: " + fmt.Sprint(size) + "\r\nConnection: close\r\n\r\n"
+			header += "Accept-Ranges: bytes\r\nContent-Lenght: " + fmt.Sprint(size) + "\r\nConnection: close\r\n\r\n"
 		} else {
 			header += "Accept-Ranges: bytes\r\nonnection: close\r\n\r\n"
 		}
@@ -123,25 +123,36 @@ func (c Request) Data(conn net.Conn, set settings.Settings){
 	}
 }
 
+func Line_request(req Request, data string, size int) Request {
+	if size <= 0{
+		return req
+	}
+	if data[0:3] == "GET"{
+		req.Method = "GET"
+		req.Path = data[5:size-9]
+		req.Type_path = true
+		if req.Path != ""{
+			if req.Path[len(req.Path)-1] == 47{
+				req.Type_path = false
+			}
+		}
+		return req
+	} else if data[0:5] == "Host:"{
+		req.Host = data[6:size]
+		return req
+	} else if data[0:11] == "User-Agent:"{
+		req.User_agent = data[12:size]
+		return req
+	}
+	return req
+}
+
 func Request_analyzer(get string, Size int) Request{
 	var req Request
 	nb := 0
-	for i := 3; i < Size; i++ {
+	for i := 3; i < Size; i++{
 		if get[i] == 13 && get[i+1] == 10{
-			if get[nb:nb+3] == "GET"{
-				req.Method = "GET"
-				req.Path = get[nb+5:i-9]
-				req.Type_path = true
-				if req.Path != ""{
-					if req.Path[len(req.Path)-1] == 47{
-					req.Type_path = false
-					}
-				}
-			} else if get[nb:nb+5] == "Host:"{
-				req.Host = get[nb+6:i]
-			} else if get[nb:nb+11] == "User-Agent:"{
-				req.User_agent = get[nb+12:i]
-			}
+			req = Line_request(req, get[nb:i], i-nb)
 			nb = i + 2
 		}
 	}
