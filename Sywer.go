@@ -35,14 +35,12 @@ func recv(conn net.Conn, set settings.Settings){
 		}
 		size_data = size_data + size
 		req_data = req_data + string(buffer[:size])
-		fmt.Println(len(req_data[size_data-5:size_data]))
 		if req_data[size_data-4:size_data] == "\r\n\r\n"{
 			break
 		}
 	}
 
 	req := request.Request_analyzer(req_data, size_data)
-	fmt.Println(req)
 	if req.Method == ""{
 		conn.Close()
 		return

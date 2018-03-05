@@ -30,7 +30,7 @@ func (c Request) Header(set settings.Settings) []byte{
 			header += "200 OK\r\n"
 			size = file.File_size(set.Path + c.Path)
 		case "404":
-			header += "404 Not Found"
+			header += "404 Not Found\r\n"
 			if set.Error404 != ""{
 				size = file.File_size(set.Error404)}
 		case "301":
@@ -127,7 +127,7 @@ func Line_request(req Request, data string, size int) Request {
 	if size <= 0{
 		return req
 	}
-	if data[0:3] == "GET"{
+	if data[0:3] == "GET" && data[size-8:size-3] == "HTTP/"{
 		req.Method = "GET"
 		req.Path = data[5:size-9]
 		req.Type_path = true
