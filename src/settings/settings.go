@@ -7,6 +7,7 @@ type Settings struct{
 	Port string
 	Path string
 	Index string
+	Logs string
 	Error404 string
 	Error301 string
 }
@@ -21,6 +22,8 @@ func Line_analyzer(set Settings, data string, i int) Settings{
 		set.Path = data[5:i]
 	} else if data[0:6] == "index	"{
 		set.Index = data[6:i]
+	} else if data[0:5] == "logs	"{
+		set.Logs = data[5:i]
 	} else if data[0:6] == "error_"{
 		switch data[6:10] {
 		case "404	":
@@ -64,6 +67,9 @@ func Recup(path string) Settings{
 	}
 	if set.Index == ""{
 		set.Index =	 "index.html"
+	}
+	if set.Logs == ""{
+		set.Logs = "/var/log/sywer/logs.swy"
 	}
 	fmt.Println(set)
 	return set

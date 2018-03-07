@@ -6,8 +6,8 @@ import ("fmt"
 		"log"
 		"./src/file"
 		"./src/request"
-		"./src/settings")
-
+		"./src/settings"
+		"./src/logs")
 
 func Ip(ip net.Addr) string{
 	ip_str := fmt.Sprint(ip)
@@ -22,7 +22,7 @@ func Ip(ip net.Addr) string{
 	return ip_str
 }
 
-func recv(conn net.Conn, set settings.Settings){
+func recv(conn net.Conn, set settings.Settings, wFile *bool){
 	buffer := make([]byte, 1024)
 	var size_data int = 0
 	var req_data string
@@ -65,11 +65,19 @@ func recv(conn net.Conn, set settings.Settings){
 	}
 	req.Data(conn, set)
 	conn.Close()
-	fmt.Println(req.Ip, "\t", req.Method, "/" + req.Path + "\t", req.User_agent, "\t", req.Err)
+	for{
+		if *wFile{
+			*wFile = false
+			logs.Log(set.Logs, req)
+			*wFile = true
+			break
+		}
+	}
 	buffer = buffer[:0]
 }
 
 func main(){
+	var wFile bool = true
 	set := settings.Recup("/var/lib/sywer/settings.swy")
 	server, err := net.Listen("tcp", ":" + set.Port)
 	if err != nil {
@@ -82,6 +90,6 @@ func main(){
 			fmt.Println("[*]Erreur", err)
 		}
 		//fmt.Println("[*]Nouvelle ecoute", conn)
-		go recv(conn, set)
+		go recv(conn, set, &wFile)
 	}
 }

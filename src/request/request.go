@@ -127,7 +127,7 @@ func (c Request) Data(conn net.Conn, set settings.Settings){
 }
 
 func Line_request(req Request, data string, size int) Request {
-	if size <= 0{
+	if size < 3{
 		return req
 	}
 	if data[0:3] == "GET" && data[size-8:size-3] == "HTTP/"{
@@ -140,10 +140,10 @@ func Line_request(req Request, data string, size int) Request {
 			}
 		}
 		return req
-	} else if data[0:5] == "Host:"{
+	} else if size > 5 && data[0:5] == "Host:"{
 		req.Host = data[6:size]
 		return req
-	} else if data[0:11] == "User-Agent:"{
+	} else if size > 11 && data[0:11] == "User-Agent:"{
 		req.User_agent = data[12:size]
 		return req
 	}
