@@ -39,6 +39,9 @@ func (c Request) Header(set settings.Settings) []byte{
 			if set.Error301 != ""{
 				size = file.File_size(set.Error301)
 			}
+		case "400":
+			header += "400 Bad Request\r\n\r\n"
+			return []byte(header)
 		}
 		if 0 < size{
 			header += "Accept-Ranges: bytes\r\nContent-Lenght: " + fmt.Sprint(size) + "\r\nConnection: close\r\n\r\n"

@@ -53,7 +53,11 @@ func recv(conn net.Conn, set settings.Settings){
 	if req.Type_path{
 		req.Err = file.File_check(set.Path + req.Path)
 	} else{
-		req.Err = file.Dir_check(set.Path + req.Path)}
+		req.Err = file.Dir_check(set.Path + req.Path)
+	}
+	if req.Err == "301" && req.Host == ""{
+		req.Err = "400"
+	}
 
 	_, err := conn.Write(req.Header(set))
 	if err != nil{
@@ -66,7 +70,7 @@ func recv(conn net.Conn, set settings.Settings){
 }
 
 func main(){
-	set := settings.Recup("settings.swy")
+	set := settings.Recup("/var/lib/sywer/settings.swy")
 	server, err := net.Listen("tcp", ":" + set.Port)
 	if err != nil {
 			log.Fatalln(err)
