@@ -12,6 +12,7 @@ type Request struct{
 	Ip string
 	Method string
 	Host string
+	Content_Type string
 	User_agent string
 	Connection string
 	//File To send
@@ -29,6 +30,7 @@ func (c Request) Header(set settings.Settings) []byte{
 		case "200":
 			header += "200 OK\r\n"
 			size = file.File_size(set.Path + c.Path)
+			c.Content_Type = file.Content_Type(c.Path, len(c.Path))
 		case "404":
 			header += "404 Not Found\r\n"
 			if set.Error404 != ""{
@@ -44,10 +46,14 @@ func (c Request) Header(set settings.Settings) []byte{
 			return []byte(header)
 		}
 		if 0 < size{
-			header += "Accept-Ranges: bytes\r\nContent-Lenght: " + fmt.Sprint(size) + "\r\nConnection: close\r\n\r\n"
+			header += "Accept-Ranges: bytes\r\nContent-Length: " + fmt.Sprint(size) + "\r\nConnection: close\r\n"
 		} else {
-			header += "Accept-Ranges: bytes\r\nonnection: close\r\n\r\n"
+			header += "Accept-Ranges: bytes\r\nonnection: close\r\n"
 		}
+		if c.Content_Type != ""{
+			header += "Content_Type: " + c.Content_Type + "\r\n"
+		}
+		header += "\r\n"
 	}
 	return []byte(header)
 }

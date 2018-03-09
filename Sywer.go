@@ -78,7 +78,7 @@ func recv(conn net.Conn, set settings.Settings, wFile *bool){
 
 func main(){
 	var wFile bool = true
-	set := settings.Recup("/var/lib/sywer/settings.swy")
+	set := settings.Recup("settings.swy")
 	server, err := net.Listen("tcp", ":" + set.Port)
 	if err != nil {
 			log.Fatalln(err)

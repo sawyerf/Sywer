@@ -1,0 +1,6 @@
+port	80
+path    /srv/http/
+index	index.html
+logs	/var/log/sywer/logs.swy
+error_404   .error404.html
+error_301   .error301.html

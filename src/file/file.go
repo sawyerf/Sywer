@@ -37,3 +37,29 @@ func Dir_check(path string) string{
 		return "404"}
 	return "200"
 }
+
+func Content_Type(name string, size int) string{
+	var ptype int
+	for i:=0; i < size; i++{
+		if name[i] == 46{
+			ptype = i +1
+		}
+	}
+	switch name[ptype:]{
+	case "html":
+		return "text/html"
+	case "css":
+		return "text/css"
+	case "png":
+		return "image/png"
+	case "jpeg":
+		return "image/jpeg"
+	case "mp4":
+		return "video/mp4"
+	case "pdf":
+		return "application/pdf"
+	case "zip":
+		return "application/zip"
+	}
+	return ""
+}
