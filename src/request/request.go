@@ -29,7 +29,7 @@ func (c Request) Header(set settings.Settings) []byte{
 		switch c.Err{
 		case "200":
 			header += "200 OK\r\n"
-			if !c.Type_path{
+			if c.Type_path{
 				size = file.File_size(set.Path + c.Path)
 			} else {
 				size = 0
