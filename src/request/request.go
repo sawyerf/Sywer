@@ -29,7 +29,11 @@ func (c Request) Header(set settings.Settings) []byte{
 		switch c.Err{
 		case "200":
 			header += "200 OK\r\n"
-			size = file.File_size(set.Path + c.Path)
+			if !c.Type_path{
+				size = file.File_size(set.Path + c.Path)
+			} else {
+				size = 0
+			}
 			c.Content_Type = file.Content_Type(c.Path, len(c.Path))
 		case "404":
 			header += "404 Not Found\r\n"
@@ -48,7 +52,7 @@ func (c Request) Header(set settings.Settings) []byte{
 		if 0 < size{
 			header += "Accept-Ranges: bytes\r\nContent-Length: " + fmt.Sprint(size) + "\r\nConnection: close\r\n"
 		} else {
-			header += "Accept-Ranges: bytes\r\nonnection: close\r\n"
+			header += "Accept-Ranges: bytes\r\nConnection: close\r\n"
 		}
 		if c.Content_Type != ""{
 			header += "Content_Type: " + c.Content_Type + "\r\n"
