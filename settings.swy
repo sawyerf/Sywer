@@ -1,3 +1,0 @@
-port	8080
-path    /srv/http/
-index	index.html
