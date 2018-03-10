@@ -26,6 +26,8 @@ func recv(conn net.Conn, set settings.Settings, wFile *bool){
 	buffer := make([]byte, 1024)
 	var size_data int = 0
 	var req_data string
+
+	//Receive the request
 	for{
 		size, err := conn.Read(buffer)
 		if err != nil {
@@ -40,15 +42,22 @@ func recv(conn net.Conn, set settings.Settings, wFile *bool){
 		}
 	}
 
+	//Analyze the request
 	req := request.Request_analyzer(req_data, size_data)
 	if req.Method == ""{
 		conn.Close()
 		return
-	} else if req.Path == ""{
-		req.Path = set.Index
 	}
-
+	switch req.Path{
+	case "":
+		req.Path = set.Index
+	case "favicon.ico":
+		if set.Ico != ""{
+			req.Path = set.Ico
+		}
+	}
 	req.Ip = Ip(conn.RemoteAddr())
+
 	// File and Directory check
 	if req.Type_path{
 		req.Err = file.File_check(set.Path + req.Path)
@@ -59,6 +68,7 @@ func recv(conn net.Conn, set settings.Settings, wFile *bool){
 		req.Err = "400"
 	}
 
+	//Send the reply
 	_, err := conn.Write(req.Header(set))
 	if err != nil{
 		return
@@ -78,18 +88,28 @@ func recv(conn net.Conn, set settings.Settings, wFile *bool){
 
 func main(){
 	var wFile bool = true
+
+	//Settings
 	set := settings.Recup("/var/lib/sywer/settings.swy")
+	if !set.Found{
+		fmt.Println("[!]File Not Found (/var/lib/sywer/settings.swy)")
+		set = settings.Recup("settings.swy")
+	}
+
+	//Init server
 	server, err := net.Listen("tcp", ":" + set.Port)
 	if err != nil {
 			log.Fatalln(err)
 	}
 	fmt.Println("[*]Start")
+
+	//affect the socket to a thread
 	for{
 		conn, err := server.Accept()
 		if err != nil {
 			fmt.Println("[*]Erreur", err)
 		}
-		//fmt.Println("[*]Nouvelle ecoute", conn)
+
 		go recv(conn, set, &wFile)
 	}
 }

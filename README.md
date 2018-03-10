@@ -14,5 +14,6 @@ port	[PORT]
 path	[SRC_PATH]
 index	[FILE]
 logs	[FILE]
+icon	[FILE]
 error_[error]	[FILE]
 ```

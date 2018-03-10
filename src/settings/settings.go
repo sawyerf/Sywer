@@ -8,8 +8,11 @@ type Settings struct{
 	Path string
 	Index string
 	Logs string
+	Ico string
 	Error404 string
 	Error301 string
+	//Settings files
+	Found bool //found: true & not found: false
 }
 
 func Line_analyzer(set Settings, data string, i int) Settings{
@@ -24,6 +27,8 @@ func Line_analyzer(set Settings, data string, i int) Settings{
 		set.Index = data[6:i]
 	} else if data[0:5] == "logs	"{
 		set.Logs = data[5:i]
+	} else if data[0:5] == "icon	"{
+		set.Ico = data[5:i]
 	} else if data[0:6] == "error_"{
 		switch data[6:10] {
 		case "404	":
@@ -40,6 +45,7 @@ func Line_analyzer(set Settings, data string, i int) Settings{
 
 func Recup(path string) Settings{
 	var set Settings
+	set.Found = false
 	//Open file
 	fi, err := os.Stat(path)
 	if err != nil{
@@ -72,5 +78,6 @@ func Recup(path string) Settings{
 		set.Logs = "/var/log/sywer/logs.swy"
 	}
 	fmt.Println(set)
+	set.Found = true
 	return set
 }

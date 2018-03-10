@@ -1,0 +1,3 @@
+#!/bin/sh
+
+./var/lib/sywer/sywer

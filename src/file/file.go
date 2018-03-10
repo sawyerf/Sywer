@@ -42,7 +42,7 @@ func Content_Type(name string, size int) string{
 	var ptype int
 	for i:=0; i < size; i++{
 		if name[i] == 46{
-			ptype = i +1
+			ptype = i + 1
 		}
 	}
 	switch name[ptype:]{
