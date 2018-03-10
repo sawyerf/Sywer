@@ -7,6 +7,6 @@ go build Sywer.go
 chmod +x ressources/sywer
 
 
-mv Sywer /var/lib/sywer/sywer
-cp ressources/sywer /usr/sbin/sywer
+mv Sywer /usr/sbin/sywer
+# cp ressources/sywer /usr/sbin/sywer
 cp ressources/sywer.service /etc/systemd/system/.
