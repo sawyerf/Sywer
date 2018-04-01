@@ -63,3 +63,16 @@ func Content_Type(name string, size int) string{
 	}
 	return ""
 }
+
+func Name_Decode(name string, len int) string{
+	for i:=0; i < len; i++{
+		if len - i > 2 && name[i] == 37{
+			if name[i+1] == 50 && name[i+2] == 48{ // %20
+				name = name[:i] + " " + name[i+3:]
+				i = i-1
+				len = len - 3
+			}
+		}
+	}
+	return name
+}

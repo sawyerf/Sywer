@@ -1,0 +1,5 @@
+port	8080
+path	./
+index	//
+logs	/data/data/com.termux/files/usr/var/log/sywer/logs.swy
+

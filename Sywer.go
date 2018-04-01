@@ -57,7 +57,7 @@ func recv(conn net.Conn, set settings.Settings, wFile *bool){
 		}
 	}
 	req.Ip = Ip(conn.RemoteAddr())
-
+	req.Path = file.Name_Decode(req.Path, len(req.Path))
 	// File and Directory check
 	if req.Type_path{
 		req.Err = file.File_check(set.Path + req.Path)
@@ -90,10 +90,15 @@ func main(){
 	var wFile bool = true
 
 	//Settings
-	set := settings.Recup("/var/lib/sywer/settings.swy")
+	set := settings.Recup("settings.swy")
 	if !set.Found{
-		fmt.Println("[!]File Not Found (/var/lib/sywer/settings.swy)")
-		set = settings.Recup("settings.swy")
+		set = settings.Recup("/data/data/com.termux/files/usr/var/lib/sywer/settings.swy")
+		if !set.Found{
+			set = settings.Recup("/var/lib/sywer/settings.swy")
+			if !set.Found{
+				fmt.Println("[!] File Not Found (.../settings.swy)")
+			}
+		}
 	}
 
 	//Init server
