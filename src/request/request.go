@@ -31,19 +31,27 @@ func (c Request) Header(set settings.Settings) []byte{
 			header += "200 OK\r\n"
 			if c.Type_path{
 				size = file.File_size(set.Path + c.Path)
+				c.Content_Type = file.Content_Type(c.Path, len(c.Path))
 			} else {
+				c.Content_Type = "text/html"
 				size = 0
 			}
-			c.Content_Type = file.Content_Type(c.Path, len(c.Path))
 		case "404":
 			header += "404 Not Found\r\n"
 			if set.Error404 != ""{
-				size = file.File_size(set.Error404)}
+				size = file.File_size(set.Error404)
+				c.Content_Type = file.Content_Type(set.Error404, len(set.Error404))
+			} else {
+				c.Content_Type = "text/html"
+			}
 		case "301":
 			header += "301 Moved Permanently\r\n"
 			header += "Location: http://" + c.Host + "/" + c.Path + "/\r\n"
 			if set.Error301 != ""{
 				size = file.File_size(set.Error301)
+				c.Content_Type = file.Content_Type(set.Error301, len(set.Error301))
+			} else {
+				c.Content_Type = "text/html"
 			}
 		case "400":
 			header += "400 Bad Request\r\n\r\n"
@@ -67,7 +75,7 @@ func (c Request) Data(conn net.Conn, set settings.Settings){
 		switch c.Err{
 		case "200":
 			if !c.Type_path{
-				_, _ = conn.Write([]byte("<h1>Index Of " + c.Path + "</h1>\n<ul>"))
+				_, _ = conn.Write([]byte("<html><h1>Index Of " + c.Path + "</h1>\n<ul>"))
 				files, _ := ioutil.ReadDir(set.Path + c.Path)
 				for _, file := range files{
 					_, _ = conn.Write([]byte("<li><a href=\"" + file.Name() + "\">" + file.Name() + "</a></li>\n"))
@@ -96,7 +104,7 @@ func (c Request) Data(conn net.Conn, set settings.Settings){
 				buffer := make([]byte, 1024)
 				file, err := os.Open(set.Error404)
 				if err != nil{
-					conn.Write([]byte("<h1>404 Not Found</h1>"))
+					conn.Write([]byte("<html><h1>404 Not Found</h1></html>"))
 					return
 				}
 				for{
@@ -109,14 +117,14 @@ func (c Request) Data(conn net.Conn, set settings.Settings){
 						_, _ = conn.Write(buffer[:Size])}
 				}
 			}else {
-				conn.Write([]byte("<h1>404 Not Found</h1>"))
+				conn.Write([]byte("<html><h1>404 Not Found</h1></html>"))
 			}
 		case "301":
 			if set.Error301 != ""{
 				buffer := make([]byte, 1024)
 				file, err := os.Open(set.Error301)
 				if err != nil {
-					conn.Write([]byte("<h1>301 Moved Permanently</h1>"))
+					conn.Write([]byte("<html><h1>301 Moved Permanently</h1></html>"))
 				}
 				for{
 					Size, _ := file.Read(buffer)
@@ -128,7 +136,7 @@ func (c Request) Data(conn net.Conn, set settings.Settings){
 						_, _ = conn.Write(buffer[:Size])}
 				}
 			}else {
-				conn.Write([]byte("<h1>301 Moved Permanently</h1>"))
+				conn.Write([]byte("<html><h1>301 Moved Permanently</h1></html>"))
 			}
 		default:
 			return

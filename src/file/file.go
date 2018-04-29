@@ -60,6 +60,8 @@ func Content_Type(name string, size int) string{
 		return "application/pdf"
 	case "zip":
 		return "application/zip"
+	case "md":
+		return "text/markdown"
 	}
 	return ""
 }
