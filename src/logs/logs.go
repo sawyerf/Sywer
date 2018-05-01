@@ -17,6 +17,7 @@ func Log(path string, req request.Request){
 }
 
 func date() string{
-	date := time.RFC822
+	da := time.Now()
+	date := da.Format(time.RFC822)
 	return date[:len(date)-4]
 }
